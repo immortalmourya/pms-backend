@@ -1,15 +1,11 @@
 const User = require("../../models/user.model");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 // get management user
 const managementUsers = async (req, res) => {
   const managementUsers = await User.find({ role: "management_admin" });
+
   res.json({ managementUsers });
-}
-
-const managementAddUsers = async (req, res) => {
-  const email = req.body.email;
-
   try {
     if (await User.findOne({ email }))
       return res.json({ msg: "User Already Exists!" });

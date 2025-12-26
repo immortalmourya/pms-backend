@@ -1,15 +1,11 @@
 const User = require("../../models/user.model");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 
 const tpoUsers = async (req, res) => {
   const tpoUsers = await User.find({ role: "tpo_admin" });
+
   res.json({ tpoUsers })
-}
-
-const tpoAddUsers = async (req, res) => {
-  const email = req.body.email;
-
   try {
     if (await User.findOne({ email }))
       return res.json({ msg: "User Already Exists!" });

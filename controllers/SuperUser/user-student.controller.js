@@ -1,6 +1,6 @@
 const User = require("../../models/user.model");
 const JobSchema = require("../../models/job.model");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 
 const studentUsers = async (req, res) => {

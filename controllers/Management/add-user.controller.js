@@ -1,5 +1,5 @@
 const Users = require('../../models/user.model');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const sendMail = require("../../config/Nodemailer");
 const emailTemplate = require("../../utlis/emailTemplates");
 const generatePassword = require('../../utlis/generatePassword');
