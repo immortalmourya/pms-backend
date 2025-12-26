@@ -3,21 +3,39 @@ const bcrypt = require("bcryptjs");
 
 
 const tpoUsers = async (req, res) => {
-  const tpoUsers = await User.find({ role: "tpo_admin" });
-
-  res.json({ tpoUsers })
   try {
+    const tpoUsers = await User.find({ role: "tpo_admin" });
+    return res.json({ tpoUsers })
+  } catch (error) {
+    console.log("user-tpo.controller => ", error);
+    return res.status(500).json({ msg: "Internal Server Error!" });
+  }
+}
+
+const tpoAddUsers = async (req, res) => {
+  const { first_name, email, number, password } = req.body;
+
+  try {
+    if (!email || !password) return res.status(400).json({ msg: "Email and password are required" });
+
     if (await User.findOne({ email }))
       return res.json({ msg: "User Already Exists!" });
 
-    const hashPassword = await bcrypt.hash(req.body.password, 10);
+    const hashPassword = await bcrypt.hash(password, 10);
 
-    const newUser = new User({ first_name: req.body.first_name, email: req.body.email, number: req.body.number, password: hashPassword, role: "tpo_admin" });
+    const newUser = new User({
+      first_name,
+      email,
+      number,
+      password: hashPassword,
+      role: "tpo_admin"
+    });
+
     await newUser.save();
     return res.json({ msg: "User Created!" });
   } catch (error) {
-    console.log("user-tpo.controller => ", error);
-    return res.json({ msg: "Internal Server Error!" });
+    console.log("user-tpo-add.controller => ", error);
+    return res.status(500).json({ msg: "Internal Server Error!" });
   }
 }
 

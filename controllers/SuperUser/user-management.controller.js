@@ -3,21 +3,39 @@ const bcrypt = require("bcryptjs");
 
 // get management user
 const managementUsers = async (req, res) => {
-  const managementUsers = await User.find({ role: "management_admin" });
-
-  res.json({ managementUsers });
   try {
+    const managementUsers = await User.find({ role: "management_admin" });
+    return res.json({ managementUsers });
+  } catch (error) {
+    console.log("admin.user-management => ", error);
+    return res.status(500).json({ msg: "Internal Server Error!" });
+  }
+}
+
+const managementAddUsers = async (req, res) => {
+  const { first_name, email, number, password } = req.body;
+
+  try {
+    if (!email || !password) return res.status(400).json({ msg: "Email and password are required" });
+
     if (await User.findOne({ email }))
       return res.json({ msg: "User Already Exists!" });
 
-    const hashPassword = await bcrypt.hash(req.body.password, 10);
+    const hashPassword = await bcrypt.hash(password, 10);
 
-    const newUser = new User({ first_name: req.body.first_name, email: req.body.email, number: req.body.number, password: hashPassword, role: "management_admin" });
+    const newUser = new User({
+      first_name,
+      email,
+      number,
+      password: hashPassword,
+      role: "management_admin"
+    });
+
     await newUser.save();
     return res.json({ msg: "User Created!" });
   } catch (error) {
-    console.log("admin.user-management => ", error);
-    return res.json({ msg: "Internal Server Error!" });
+    console.log("admin.user-management-add => ", error);
+    return res.status(500).json({ msg: "Internal Server Error!" });
   }
 }
 
@@ -30,7 +48,6 @@ const managementDeleteUsers = async (req, res) => {
     return res.json({ msg: "Error While Deleting User!" });
   }
 }
-
 
 module.exports = {
   managementUsers,
